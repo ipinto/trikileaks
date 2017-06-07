@@ -8,7 +8,7 @@ import twitter_client
 
 def clean_tweet(status):
     return {
-        'id': status.id,
+        'id': status.id_str,
         'user': status.user.screen_name.encode('utf-8', 'ignore'),
         'date_created': status.created_at.encode('utf-8', 'ignore'),
         'text': status.text.encode('utf-8', 'ignore')

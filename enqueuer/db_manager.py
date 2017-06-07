@@ -15,7 +15,7 @@ def create_db(conn):
     logging.info("Creating database")
     create_schema = """
     CREATE TABLE song_requests (
-        id    NUMERIC PRIMARY KEY,
+        id    TEXT PRIMARY KEY,
         date  DATETIME DEFAULT current_timestamp,
         json  TEXT,
         done  BOOLEAN DEFAULT 0
@@ -28,7 +28,7 @@ def insert_or_replace_data(tweet):
     is_new = is_new_db()
     with sqlite3.connect(settings.DB_FILE_NAME) as conn:
         if is_new: create_db(conn)
-        conn.execute("INSERT OR REPLACE INTO song_requests (id, date, json) VALUES ({}, '{}', '{}')".format(
+        conn.execute("INSERT OR REPLACE INTO song_requests (id, date, json) VALUES ('{}', '{}', '{}')".format(
             tweet['id'],
             tweet['date_created'],
             json.dumps(tweet).replace("'", "''")))
@@ -42,7 +42,7 @@ def delete_song(song_id):
     is_new = is_new_db()
     with sqlite3.connect(settings.DB_FILE_NAME) as conn:
         if is_new: create_db(conn)
-        conn.execute("UPDATE song_requests SET done = 1 WHERE id = {}".format(song_id))
+        conn.execute("UPDATE song_requests SET done = 1 WHERE id = '{}'".format(song_id))
         return conn.total_changes
 
 
@@ -54,7 +54,7 @@ def get_active_songs(limit=50):
     else:
         with sqlite3.connect(settings.DB_FILE_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT json FROM song_requests WHERE done = 0 ORDER BY date LIMIT {}".format(limit))
+            cursor.execute("SELECT json FROM song_requests WHERE done = 0 ORDER BY date DESC LIMIT {}".format(limit))
             rows = cursor.fetchall()
 
             if not rows:
@@ -73,7 +73,7 @@ def get_active_songs_greater_than(date, limit=50):
         with sqlite3.connect(settings.DB_FILE_NAME) as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT json FROM song_requests WHERE done = 0 AND date >= '{}' ORDER BY date LIMIT {}".format(
+                "SELECT json FROM song_requests WHERE done = 0 AND date >= '{}' ORDER BY date DESC LIMIT {}".format(
                     date, limit))
             rows = cursor.fetchall()
 

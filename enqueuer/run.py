@@ -16,6 +16,7 @@ app = web.application(urls, globals())
 class list_active_songs:
     def GET(self):
         web.header('Content-Type', 'application/json')
+        web.header('Access-Control-Allow-Origin', '*')
         params = web.input()
         if 'greater_than' in params:
             return db_manager.get_active_songs_greater_than(params.greater_than)
@@ -24,8 +25,14 @@ class list_active_songs:
 
 
 class delete_song:
+    def OPTIONS(self, song_id):
+        web.header('Access-Control-Allow-Origin', '*')
+        web.header('Access-Control-Allow-Methods', 'DELETE')
+        return web.OK()
+
     def DELETE(self, song_id):
-        web.header('Content-Type', 'application/json')
+        web.header('Access-Control-Allow-Origin', '*')
+        web.header('Access-Control-Allow-Methods', 'DELETE')
         try:
             if db_manager.delete_song(song_id):
                 return json.dumps({"message": "Song {} deleted".format(song_id)})
