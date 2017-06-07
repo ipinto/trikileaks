@@ -1,0 +1,9 @@
+<div>
+  <div class='wrapper'>
+    <ul [dragula]='"third-bag"' [dragulaModel]='tweets'>
+      <li *ngFor="let tweet of tweets">
+        <button (click)="remove(tweet)">Eliminar</button> - {{tweet.date_created | amTimeAgo}} - {{tweet.text}}
+      </li>
+    </ul>
+  </div>
+</div>
